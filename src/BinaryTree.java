@@ -58,14 +58,21 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
     @Override
     public boolean remove(Object o) {
         Node<T> parent = root;
+        Node<T> required;
+
         @SuppressWarnings("unchecked")
         T t = (T) o;
+
         if (root == null) throw new NoSuchElementException();
-        if (parent.value == t) { //если вершина является удаляемым элементом (рассматриваем 3 ситуации)
+        if (parent.value == t) {
+
+            //если вершина является удаляемым элементом (рассматриваем 3 ситуации)
             if (parent.left == null && parent.right == null) root = null;
             if (parent.left != null && parent.right == null) root = parent.left;
             if (parent.left == null && parent.right != null) root = parent.right;
-            else { //если у вершины 2 поддерева
+            else {
+
+                //если у вершины 2 поддерева
                 Node<T> target = null;
                 if ((parent.right != null ? parent.right.left : null) != null) {
                     target = parent.right;
@@ -84,14 +91,16 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
                     root = parent.right;
                 }
             }
-        } else { //находим нужный корень с удаляемым узлом
+        } else {
+
+            //находим нужный корень с удаляемым узлом
             while ((parent.value.compareTo(t) > 0 && parent.left.value != t) || (parent.value.compareTo(t) < 0 && parent.right.value != t)) {
                 if (parent.value.compareTo(t) < 0 && parent.right != o) parent = parent.right;
                 else if (parent.value.compareTo(t) > 0 && parent.left != o) parent = parent.left;
                 else throw new NoSuchElementException();
             }
 
-            Node<T> required = null; //обозначаем удаляемый узел (аналогично рассматриваем 3 ситуации)
+            //обозначаем удаляемый узел (аналогично рассматриваем 3 ситуации)
             if (parent.left != null && parent.left.value == t) required = parent.left;
             else if (parent.right != null && parent.right.value == t) required = parent.right;
             else throw new NoSuchElementException();
@@ -101,12 +110,14 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
                 else if (parent.right == required) parent.right = null;
             }
 
-            if ((required.left != null && required.right == null) || (required.left == null && required.right != null)) { //если один дочерний узел
+            //если один дочерний узел
+            if ((required.left != null && required.right == null) || (required.left == null && required.right != null)) {
                 if (parent.left == required && required.left != null) parent.left = required.left;
                 else if (parent.right == required && required.right != null) parent.right = required.right;
             }
 
-            if (required.left != null && required.right != null) { //если 2 дочерних узла
+            //если 2 дочерних узла
+            if (required.left != null && required.right != null) {
                 Node<T> target = null;
                 if (required.right.left != null) {
                     target = required.right;
