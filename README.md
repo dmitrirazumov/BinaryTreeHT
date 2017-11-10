@@ -1,0 +1,3 @@
+# BinaryTreeHT
+
+Сделан метод remove();
