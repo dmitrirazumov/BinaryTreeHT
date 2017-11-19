@@ -12,6 +12,7 @@ public class BinaryTreeTests {
         BinaryTree tree3 = new BinaryTree();
         BinaryTree tree4 = new BinaryTree();
         BinaryTree tree5 = new BinaryTree();
+        BinaryTree tree6 = new BinaryTree();
 
         tree1.add(8);
 
@@ -82,6 +83,33 @@ public class BinaryTreeTests {
         assertEquals(15, tree5.last());
         assertFalse(tree5.contains(8));
         assertFalse(tree5.contains(12));
+
+        tree6.add(84);
+        tree6.add(50);
+        tree6.add(41);
+        tree6.add(83);
+        tree6.add(20);
+        tree6.add(0);
+        tree6.add(86);
+        tree6.add(97);
+        tree6.add(33);
+        tree6.add(59);
+        tree6.add(23);
+        tree6.add(1);
+        tree6.add(48);
+        tree6.add(89);
+        tree6.add(21);
+        tree6.add(91);
+        tree6.add(88);
+        tree6.add(42);
+        tree6.add(70);
+        tree6.add(47);
+
+        tree6.remove(33);
+        assertEquals(19, tree6.size());
+        assertEquals(0, tree6.first());
+        assertEquals(97, tree6.last());
+        assertFalse(tree6.contains(33));
     }
 }
 

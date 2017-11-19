@@ -63,47 +63,31 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
         @SuppressWarnings("unchecked")
         T t = (T) o;
 
-        if (root == null) throw new NoSuchElementException();
+        if (root == null) return false;
         if (parent.value == t) {
+            required = parent;
 
             //если вершина является удаляемым элементом (рассматриваем 3 ситуации)
-            if (parent.left == null && parent.right == null) root = null;
-            if (parent.left != null && parent.right == null) root = parent.left;
-            if (parent.left == null && parent.right != null) root = parent.right;
-            else {
+            if (required.left == null && required.right == null) root = null;
+            if (required.right == null) root = required.left;
+            if (required.left == null) root = required.right;
 
-                //если у вершины 2 поддерева
-                Node<T> target = null;
-                if ((parent.right != null ? parent.right.left : null) != null) {
-                    target = parent.right;
-                    while (target.left.left != null) target = target.left;
-                }
-                if (target != null) {
-                    Node<T> minimal = target.left;
-                    target.left = minimal.right;
-                    minimal.right = parent.right;
-                    minimal.left = parent.left;
-                    root = minimal;
-                } else {
-                    if (parent.right != null) {
-                        parent.right.left = parent.left;
-                    }
-                    root = parent.right;
-                }
-            }
+            //если у вершины 2 поддерева
+            else findTarget(required, parent, t);
+
         } else {
 
             //находим нужный корень с удаляемым узлом
             while ((parent.value.compareTo(t) > 0 && parent.left.value != t) || (parent.value.compareTo(t) < 0 && parent.right.value != t)) {
                 if (parent.value.compareTo(t) < 0 && parent.right != o) parent = parent.right;
                 else if (parent.value.compareTo(t) > 0 && parent.left != o) parent = parent.left;
-                else throw new NoSuchElementException();
+                else return false;
             }
 
             //обозначаем удаляемый узел (аналогично рассматриваем 3 ситуации)
             if (parent.left != null && parent.left.value == t) required = parent.left;
             else if (parent.right != null && parent.right.value == t) required = parent.right;
-            else throw new NoSuchElementException();
+            else return false;
 
             if (required.left == null && required.right == null) { //если нет дочерних узлов
                 if (parent.left == required) parent.left = null;
@@ -113,32 +97,54 @@ public class BinaryTree<T extends Comparable<T>> extends AbstractSet<T> implemen
             //если один дочерний узел
             if ((required.left != null && required.right == null) || (required.left == null && required.right != null)) {
                 if (parent.left == required && required.left != null) parent.left = required.left;
-                else if (parent.right == required && required.right != null) parent.right = required.right;
+                if (parent.right == required && required.right != null) parent.right = required.right;
+                if (parent.left == required && required.right != null) parent.left = required.right;
+                if (parent.right == required && required.left != null) parent.right = required.left;
             }
 
             //если 2 дочерних узла
-            if (required.left != null && required.right != null) {
-                Node<T> target = null;
-                if (required.right.left != null) {
-                    target = required.right;
-                    while (target.left.left != null) target = target.left;
-                }
-                if (target != null) {
-                    Node<T> minimal = target.left;
-                    target.left = minimal.right;
-                    minimal.left = required.left;
-                    minimal.right = required.right;
-                    if (parent.left == required) parent.left = minimal;
-                    else if (parent.right == required) parent.right = minimal;
-                } else {
-                    required.right.left = required.left;
-                    if (parent.left == required) parent.left = required.right;
-                    else if (parent.right == required) parent.right = required.right;
-                }
-            }
+            if (required.left != null && required.right != null) findTarget(required, parent, t);
+
         }
         size--;
         return true;
+    }
+
+    public void findTarget(Node<T> object, Node<T> parent, T t) {
+        Node<T> target;
+
+        if ((object.right != null ? object.right.left : null) != null) {
+            target = object.right;
+            while (target.left.left != null) target = target.left;
+        } else target = null;
+
+        if (parent.value == t) {
+            if (target != null) {
+                Node<T> minimal = target.left;
+                target.left = minimal.right;
+                minimal.right = object.right;
+                minimal.left = object.left;
+                root = minimal;
+            } else {
+                if (object.right != null) {
+                    object.right.left = object.left;
+                }
+                root = object.right;
+            }
+        } else if (object.left != null && object.right != null) {
+            if (target != null) {
+                Node<T> minimal = target.left;
+                target.left = minimal.right;
+                minimal.left = object.left;
+                minimal.right = object.right;
+                if (parent.left == object) parent.left = minimal;
+                else if (parent.right == object) parent.right = minimal;
+            } else {
+                object.right.left = object.left;
+                if (parent.left == object) parent.left = object.right;
+                else if (parent.right == object) parent.right = object.right;
+            }
+        }
     }
 
     @Override
